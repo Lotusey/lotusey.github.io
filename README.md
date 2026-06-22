@@ -1,2 +1,2 @@
-# lhirias.github.io
+# lotusey.github.io
 Repo for my personal website.
