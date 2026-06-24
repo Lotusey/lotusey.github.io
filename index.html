@@ -35,6 +35,12 @@
       ul li a:hover {
         background-color: #111111;
       }
+
+      img {
+        image-rendering: -webkit-optimize-contrast; /* Legacy Safari */
+        image-rendering: crisp-edges;
+        image-rendering: pixelated;
+      }
     </style>
   </head>
   <body>
@@ -47,5 +53,7 @@
     </ul>
     <h2> Louis' Portfolio Website</h2>
     <p> 🚧 Work in progress... 🚧</p>
+    <script src="//cdn.jsdelivr.net/npm/phaser@4.2.0/dist/phaser.js"></script>
+    <script src="js/game/main.js" type="module"></script>
   </body>
 </html>
