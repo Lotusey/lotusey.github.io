@@ -11,7 +11,6 @@ export class MainScene extends Phaser.Scene {
     preload() {
         console.log('preload method called');
         this.load.image('background', 'assets/tilemaps/example_pewter2.png');
-        //this.load.image('player', 'assets/sprites/MeStanding.png');
         this.load.spritesheet('player', 'assets/sprites/walking_animation.png', {
             frameWidth: 100,
             frameHeight: 90,
@@ -19,17 +18,29 @@ export class MainScene extends Phaser.Scene {
     }
     
     create() {
+        //logging
         console.log('create method called');
+
+        //Setting up the background image
         const gameWidth = this.scale.width;
         const gameHeight = this.scale.height;
         const background = this.add.image(0, 0, 'background');
         background.setPosition(gameWidth / 2, gameHeight / 2);
 
-        this.player = this.add.sprite(gameWidth / 2, gameHeight / 2, 'player');
-        this.player.setDepth(2);
-        //this.player.setPosition(gameWidth / 2, gameHeight / 2);
-        this.player.setOrigin(0.5,0.5);
+        //Player sprite settings
+        this.player = this.physics.add.sprite(gameWidth / 2, gameHeight / 2, 'player');
         this.player.setScale(0.25);
+        this.player.setOrigin(0.5,0.5);
+        this.player.body.setCollideWorldBounds(true);
+        this.player.body.allowGravity = false;
+        this.player.setDepth(2);
+
+        //Camera settings
+        this.cameras.main.startFollow(this.player);
+
+        //Physics settings
+        this.physics.world.setBounds(background.x - background.width / 2, background.y - background.height / 2, background.width, background.height);
+        this.physics.world.setBoundsCollision(true, true, true, true);
 
         this.cursors = this.input.keyboard.createCursorKeys();
         this.keys = this.input.keyboard.addKeys({
@@ -45,7 +56,7 @@ export class MainScene extends Phaser.Scene {
                     frames: [0, 1, 2],
                 }),    
                 frameRate: 6,
-                repeat: 0,     
+                repeat: -1,     
         });
 
         this.anims.create({
@@ -54,7 +65,7 @@ export class MainScene extends Phaser.Scene {
                     frames: [3, 4, 5],
                 }),    
                 frameRate: 6,
-                repeat: 0,     
+                repeat: -1,     
         });
 
         this.anims.create({
@@ -63,7 +74,7 @@ export class MainScene extends Phaser.Scene {
                     frames: [6, 7, 8],
                 }),    
                 frameRate: 6,
-                repeat: 0,     
+                repeat: -1,     
         });
 
         this.anims.create({
@@ -72,44 +83,47 @@ export class MainScene extends Phaser.Scene {
                     frames: [9, 10, 11],
                 }),    
                 frameRate: 6,
-                repeat: 0,     
+                repeat: -1,     
         });
     }
     
     update(time, delta) {
         console.log('update method called');
 
-        const speed = 60; 
+        const speed = 100; 
+
+        const left = this.cursors.left.isDown || this.keys.A.isDown;
+        const right = this.cursors.right.isDown || this.keys.D.isDown;
+        const up = this.cursors.up.isDown || this.keys.W.isDown;
+        const down = this.cursors.down.isDown || this.keys.S.isDown;
+
         let velocityX = 0;
         let velocityY = 0;
-
-        if (this.cursors.left.isDown || this.keys.A.isDown){
+        let animKey = null;
+        
+        if (left && !right){
             velocityX = -speed;
-            this.player.play('walk_left', true);
+            animKey = 'walk_left';
         }
-        else if (this.cursors.right.isDown || this.keys.D.isDown){
+        else if (right && !left){
             velocityX = speed;
-            this.player.play('walk_right', true);
+            animKey = 'walk_right';
         }
-
-        if (this.cursors.up.isDown || this.keys.W.isDown){
+        else if (up && !down){
             velocityY = -speed;
-            this.player.play('walk_up', true);
+            animKey = 'walk_up';
         }
-        else if (this.cursors.down.isDown || this.keys.S.isDown){
+        else if(down && !up){
             velocityY = speed;
-            this.player.play('walk_down', true);
-        }
-        if (velocityX == 0 && velocityY == 0){
-            this.player.stop();
+            animKey = 'walk_down';
         }
 
-    //normalizing diagonal speed
-    if (velocityX !== 0 || velocityY !== 0){
-        const magnitude = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
-        velocityX = (velocityX / magnitude) * speed;
-        velocityY = (velocityY / magnitude) * speed;
-    }
+        if (animKey){
+            this.player.play(animKey, true);
+        }
+        else{
+            this.player.play({key: 'animKey', startFrame: 0}, true);
+        }
 
     this.player.x += velocityX * (delta / 1000);
     this.player.y += velocityY * (delta / 1000);

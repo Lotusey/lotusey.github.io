@@ -18,6 +18,10 @@ const config = {
         antialias: false,
     },
     resolution: window.devicePixelRatio,
+
+    physics:{
+        default: 'arcade'
+    },
 };
 
 
