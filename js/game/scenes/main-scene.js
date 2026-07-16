@@ -90,7 +90,8 @@ export class MainScene extends Phaser.Scene {
     update(time, delta) {
         console.log('update method called');
 
-        const speed = 100; 
+        const speed = 60; 
+        //const speed = 120; //adjust speed for testing purposes
 
         const left = this.cursors.left.isDown || this.keys.A.isDown;
         const right = this.cursors.right.isDown || this.keys.D.isDown;
