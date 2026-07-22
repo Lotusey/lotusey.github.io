@@ -9,8 +9,8 @@ const config = {
     backgroundColor: '#000000',
     
     scale: {
-        width: 300,
-        height: 200,
+        width: 450,
+        height: 300,
         mode: Phaser.Scale.FIT,
     },
     render: {
